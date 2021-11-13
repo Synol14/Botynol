@@ -1,4 +1,4 @@
-const { Client, MessageEmbed, User, Channel, Interaction } = require("discord.js");
+const { Client, MessageEmbed, User, Channel, Interaction, CommandInteraction } = require("discord.js");
 const { readdirSync } = require("fs");
 
 /**
@@ -64,16 +64,18 @@ module.exports.ephemeralReply = async (interaction, msg) => {
  * @param {String} message Message to send
  */
 module.exports.ephemeralMessageReply = async (interaction, message) => {
-    await interaction.reply({ content: message, ephemeral: true});
+    if (interaction.deferred) await interaction.editReply({ content: message, ephemeral: true});
+    else await interaction.reply({ content: message, ephemeral: true});
 }
 
 /**
  * Reply a Embed to a Interaction with Ephemerel Option enabled
- * @param {Interaction} interaction Application Command Interaction
+ * @param {CommandInteraction} interaction Application Command Interaction
  * @param {MessageEmbed} embed Embed to send
  */
  module.exports.ephemeralEmbedReply = async (interaction, embed) => {
-    await interaction.reply({ embeds: [ embed.toJSON() ], ephemeral: true});
+    if (interaction.replied) await interaction.editReply({ embeds: [ embed.toJSON() ], ephemeral: true});
+    else await interaction.reply({ embeds: [ embed.toJSON() ], ephemeral: true});
 }
 
 /**
