@@ -1,9 +1,14 @@
 const { Client, Intents, Collection } = require('discord.js');
-const { loadCommands, loadEvents, loadEventsSubDir } = require('./Utils');
+const { loadCommands, loadEvents } = require('./Utils');
 require('dotenv').config()
 
 const client = new Client({ 
-    intents: [Intents.FLAGS.GUILDS]
+    intents: [
+        Intents.FLAGS.GUILDS,
+        Intents.FLAGS.GUILD_MESSAGES,
+        Intents.FLAGS.GUILD_VOICE_STATES,
+        Intents.FLAGS.GUILD_MEMBERS
+    ]
 });
 
 /// Add Collections
@@ -22,7 +27,7 @@ client.once('ready', () => {
     loadEvents(client);
 
     /// Logging
-    console.log(`Bot Ready ( ${client.user.tag} - ${client.user.id} )`);
+    console.log(`\n[Info]  Bot Ready ( ${client.user.tag} - ${client.user.id} )\n`);
 });
 
 client.login(process.env.TOKEN);

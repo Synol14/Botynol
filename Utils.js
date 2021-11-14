@@ -6,17 +6,17 @@ const { readdirSync } = require("fs");
  * @param {String} string Embed Title
  * @return {MessageEmbed} Embed
  */
- module.exports.getEmbed = async (string) => {
+ module.exports.getEmbed = (string) => {
     return getEmbed(process.env.DEFAULT_COLOR, string);
 }
 
 /**
  * Get an Embed with a Title and a Color
- * @param {String} color Embed Color (Hex)
  * @param {String} string Embed Title
+ * @param {String} color Embed Color (Hex)
  * @return {MessageEmbed} Embed
  */
- module.exports.getEmbed = async (color, string) => {
+ module.exports.getEmbed = (string, color) => {
     return new MessageEmbed().setColor(color).setTitle(string);
 }
 
@@ -64,7 +64,7 @@ module.exports.ephemeralReply = async (interaction, msg) => {
  * @param {String} message Message to send
  */
 module.exports.ephemeralMessageReply = async (interaction, message) => {
-    if (interaction.deferred) await interaction.editReply({ content: message, ephemeral: true});
+    if (interaction.replied || interaction.deferred) await interaction.editReply({ content: message, ephemeral: true});
     else await interaction.reply({ content: message, ephemeral: true});
 }
 
@@ -74,8 +74,20 @@ module.exports.ephemeralMessageReply = async (interaction, message) => {
  * @param {MessageEmbed} embed Embed to send
  */
  module.exports.ephemeralEmbedReply = async (interaction, embed) => {
-    if (interaction.replied) await interaction.editReply({ embeds: [ embed.toJSON() ], ephemeral: true});
+    if (interaction.replied || interaction.deferred) await interaction.editReply({ embeds: [ embed.toJSON() ], ephemeral: true});
     else await interaction.reply({ embeds: [ embed.toJSON() ], ephemeral: true});
+}
+
+/**
+ * Get Bot Color from his Role of Guild
+ * @param {Client} client Bot Client
+ * @param {Integer} guildId Guild Id
+ * @returns {String} Color ( Hex )
+ */
+module.exports.getBotColor = (client, guildId) => {
+    const guild = client.guilds.cache.find(guild => guild.id == guildId);
+    if (guild)  return guild.members.cache.find(m => m.id == client.user.id).displayHexColor;
+    else return process.env.DEFAULT_COLOR
 }
 
 /**
@@ -84,6 +96,7 @@ module.exports.ephemeralMessageReply = async (interaction, message) => {
  * @param {String} dir Commands Directory
  */
 module.exports.loadCommands = (client, dir = `${__dirname}/commands/`) => {
+    console.log('\n[Info]  Commands Loading ...');
     client.commands.clear();
     client.commandsGroups = [];
     readdirSync(dir).forEach(dirs => {
@@ -92,7 +105,7 @@ module.exports.loadCommands = (client, dir = `${__dirname}/commands/`) => {
         for (const file of commands) {
             const getFile = require(`${dir}/${dirs}/${file}`);
             client.commands.set(getFile.info.name.toLowerCase(), getFile)
-            console.log(`Commands loaded: ${getFile.info.name}`);
+            console.log(`-> Command loaded: ${getFile.info.name}`);
         }
     });
 }
@@ -103,16 +116,17 @@ module.exports.loadCommands = (client, dir = `${__dirname}/commands/`) => {
  * @param {String} dir Directory Path
  */
 module.exports.loadEvents = (client, dir = `${__dirname}/events/`) => {
+    console.log('\n[Info]  Events Loading ...');
     readdirSync(dir).forEach(dirs => {
         const eventFiles = readdirSync(`${dir}/${dirs}/`).filter(file => file.endsWith('.js'));
         for (const file of eventFiles) {
-            console.log(file);
             const event = require(`${dir}/${dirs}/${file}`);
             if (event.once) {
                 client.once(event.name, (...args) => event.execute(...args));
             } else {
                 client.on(event.name, (...args) => event.execute(...args));
             }
+            console.log(`-> Event loaded: ${event.name} - ${file}`);
         }
     });
 }

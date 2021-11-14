@@ -1,5 +1,5 @@
-const { Interaction, MessageEmbed } = require("discord.js");
-const { ephemeralReply, ephemeralEmbedReply } = require("../../Utils");
+const { Interaction } = require("discord.js");
+const { ephemeralEmbedReply, getEmbed } = require("../../Utils");
 
 module.exports = {
     name: 'interactionCreate',
@@ -21,7 +21,7 @@ module.exports = {
         /// Execute
         let msg = 'SUCCESS'
         if (!command) {
-            await ephemeralEmbedReply(interaction, new MessageEmbed().setColor(process.env.RED).setTitle('Command no Done !'));
+            await ephemeralEmbedReply(interaction, getEmbed('Command no Done !', process.env.RED));
             msg = 'FAIL (No Done)';
         }
         else {
@@ -30,12 +30,12 @@ module.exports = {
                 await command.callback(interaction.client, interaction, options);
             } catch (error) {
                 console.error(error);
-                await ephemeralEmbedReply(interaction, new MessageEmbed().setColor(process.env.RED).setTitle('Command Error !'));
+                await ephemeralEmbedReply(interaction, getEmbed('Command Error !', process.env.RED));
                 msg = `FAIL ( ${error} )`;
+            } finally {
+                /// Log Command
+                console.log(`[Info]  [App_Cmd - ${id}]  The \'${commandName}\' command has been use with  ${msg}`);
             }
         }
-
-        /// Log Command
-        console.log(`[App_Cmd - ${id}] The \'${commandName}\' command has been use with  ${msg}`);
     }
 }

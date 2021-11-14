@@ -1,12 +1,13 @@
 const { Client, CommandInteractionOptionResolver, MessageEmbed, CommandInteraction } = require("discord.js")
 const os = require('os-utils');
+const { getBotColor } = require("../../Utils");
 require('../../Utils')
 require('dotenv').config()
 
 module.exports.info = {
     name: 'ping',
     defer: false,
-    ephemeral: true
+    ephemeral: false
 }
 
 /**
@@ -21,7 +22,7 @@ module.exports.callback = async (client, interaction, options) => {
     else var ownerMsg = "";
 
     const embed = new MessageEmbed()
-        .setColor(process.env.DEFAULT_COLOR)
+        .setColor(getBotColor(client, interaction.guildId))
         .setTitle(":ping_pong:  Pong !")
         .setDescription(ownerMsg + `
             Message sending - \`${Date.now() - interaction.createdTimestamp} ms\`

@@ -1,4 +1,4 @@
-const { Client, Interaction, CommandInteractionOptionResolver } = require("discord.js")
+const { Client, CommandInteraction, CommandInteractionOptionResolver } = require("discord.js")
 
 module.exports.info = {
     name: 'defaultCommand',
@@ -9,7 +9,7 @@ module.exports.info = {
 /**
  * Callback Method for Slash Command Interaction
  * @param {Client} client Bot Client
- * @param {Interaction} interaction Application Command Interaction
+ * @param {CommandInteraction} interaction Application Command Interaction
  * @param {CommandInteractionOptionResolver} options Application Command Options
  */
 module.exports.callback = async (client, interaction, options) => {
