@@ -43,9 +43,15 @@ module.exports.callback = async (client, interaction, options) => {
                     else messages = messages.filter(msg => msg.author.id != keep_only.id);
                 }
 
-                interaction.channel.bulkDelete(messages, true);
+                interaction.channel.bulkDelete(messages, true)
+                    .then(amount => ephemeralEmbedReply(interaction, getEmbed(`${amount} messages has been deleted !`, getBotColor(client, interaction.guildId))))
+                    .catch(err => getErrorLog(interaction, err));
             })
-            .catch(err => console.log(`[ERROR]  [App_Cmd - ${interaction.id}]  An error occurred while executing the \'${interaction.commandName}\' command -- ${err}`));
+            .catch(err => console.log(getErrorLog(interaction, err)));
 
     getBotColor(client, interaction.guildId);
+}
+
+function getErrorLog(interaction, err) {
+    return `[ERROR]  [App_Cmd - ${interaction.id}]  An error occurred while executing the \'${interaction.commandName}\' command -- ${err}`;
 }
