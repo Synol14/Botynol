@@ -55,8 +55,11 @@ module.exports.playVideo = async (interaction, next = false, looping = false) =>
 
         /// Leave Channel and Reset Music Object
         resetMusicObject(interaction.client, interaction.guildId);
-        connection.destroy();
-        //connection.disconnect();
+        music.audioPlayer = null;
+        setTimeout(() => {
+            connection.destroy();
+            connection.disconnect();
+        }, 10000);
     });
 }
 
@@ -68,7 +71,7 @@ module.exports.sendNowPlayingEmbed = async (interaction) => {
     const music = interaction.client.servers.get(interaction.guildId);
     interaction.channel.send({ embeds: [ new MessageEmbed()
             .setColor(getBotColor(interaction.client))
-            .setTitle('Now Playing :')
+            .setTitle('🎵 Now Playing :')
             .setDescription(`[${music.currentVideo.title}](${music.currentVideo.url})`)
             .setAuthor(music.currentVideo.commandAuthor.name, music.currentVideo.commandAuthor.avatar, music.currentVideo.commandAuthor.avatar)
             .setImage(music.currentVideo.imageUrl)
@@ -88,7 +91,7 @@ module.exports.sendQueuedEmbed = async (interaction, result) => {
     embedReply(interaction, 
         new MessageEmbed()
             .setColor(getBotColor(interaction.client))
-            .setDescription(`Queued [${result.title}](${result.url})`)
+            .setDescription(`🎵 Queued [${result.title}](${result.url})`)
     );
 }
 
@@ -97,5 +100,6 @@ module.exports.sendQueuedEmbed = async (interaction, result) => {
  * @param {CommandInteraction} interaction Application Command Interaction
  */
 module.exports.deleteNowPlayingEmbed = async (interaction) => {
-    interaction.client.servers.get(interaction.guildId).message.delete();
+    const music = interaction.client.servers.get(interaction.guildId);
+    if (music.message) music.message.delete();
 }

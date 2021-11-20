@@ -20,7 +20,7 @@ module.exports.info = {
  */
 module.exports.callback = async (client, interaction, options) => {
     const voiceChannel = client.channels.cache.find(c => c.id == interaction.member.voice.channelId);
-    if (!voiceChannel) return embedReply(interaction, getEmbed("You are not in voice channel !", process.env.RED), false, true);
+    if (!voiceChannel) return embedReply(interaction, getEmbed("🔊 You are not in voice channel !", process.env.RED), false, true);
     const music = await client.servers.get(voiceChannel.guild.id);
 
     const connection = joinVoiceChannel({
@@ -39,29 +39,35 @@ module.exports.callback = async (client, interaction, options) => {
     
     /* Playlist */
     if (ytpl.validateID(query)) {
-        
-        /*ytpl(query).then((result) => {
+        ytpl(query).then((result) => {
+
             /// Add all videos of playlist in queue
             result.items.forEach((video) => {
                 music.queue.push({
                     title: video.title,
                     url: video.shortUrl,
                     imageUrl: video.bestThumbnail.url,
-                    commandAuthor: client.users.fetch(interaction.member.user.id),
+                    commandAuthor: {
+                        name: interaction.member.displayName(),
+                        avatar: interaction.member.displayAvatarURL()
+                    },
                     looping: false
                 })
             })
             /// Send embed for playlist queued
-            play.sendCustomQueuedEmbed(client, interaction, result);
+            sendQueuedEmbed(interaction, result);
 
             /// If no current video, start playlist
             if (music.currentVideo.url == '') {
                 music.currentVideo = music.queue[0];
-                play.sendNowPlayigEmbed(client, interaction);
-                play.playVideo(interaction, connection);
+                sendNowPlayingEmbed(interaction);
+                playVideo(interaction, connection);
             }
         })
-        .catch(console.error);*/
+        .catch((err) => {
+            if (err.message.startsWith('API-Error: The playlist does not exist.')) embedReply(interaction, getEmbed('☹ This playlist does not exist !', process.env.RED), false, true);
+            console.error(err);
+        });
     }
 
     /* Video */
@@ -69,7 +75,6 @@ module.exports.callback = async (client, interaction, options) => {
         ytsr(query, { key: process.env.API_KEY, maxResults: 1, type: 'video' }).then(async (result) => {
 
             if (result.results[0]) {
-
                 /// Set Video Object
                 const foundVideo = {
                     title: result.results[0].title,
@@ -78,7 +83,8 @@ module.exports.callback = async (client, interaction, options) => {
                     commandAuthor: {
                         name: interaction.user.username,
                         avatar: interaction.user.displayAvatarURL()
-                    }
+                    },
+                    looping: false
                 };
 
                 /// Send Queue Embed
@@ -89,13 +95,15 @@ module.exports.callback = async (client, interaction, options) => {
 
                 /// Else Finish Quild Object
                 music.currentVideo = foundVideo;
-                console.log(client.servers.get(interaction.guildId));
 
                 /// Start Video
                 sendNowPlayingEmbed(interaction);
                 await playVideo(interaction, connection);
             }
+            else embedReply(interaction, getEmbed('Song not found ! Sorry ☹ !', process.env.RED), false, true);
         })
         .catch(console.error);
     }
+
+    //embedReply(interaction, getEmbed('Song not found ! Sorry ☹ !', process.env.RED), false, true);
 }

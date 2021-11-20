@@ -8,7 +8,8 @@ module.exports.music = {
         commandAuthor: {
             name: '',
             avatar: ''
-        }
+        },
+        looping: false
     },
     queue: [],
     audioPlayer: null
