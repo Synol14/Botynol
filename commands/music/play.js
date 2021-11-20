@@ -5,6 +5,7 @@ const ytsr = require('youtube-search');
 const ytpl = require('ytpl');
 const { sendQueuedEmbed, playVideo, sendNowPlayingEmbed } = require("../../structures/MusicUtils");
 const { joinVoiceChannel } = require("@discordjs/voice");
+const { USER_NO_IN_CHANNEL } = require("../../structures/Embeds");
 
 module.exports.info = {
     name: 'play',
@@ -20,7 +21,7 @@ module.exports.info = {
  */
 module.exports.callback = async (client, interaction, options) => {
     const voiceChannel = client.channels.cache.find(c => c.id == interaction.member.voice.channelId);
-    if (!voiceChannel) return embedReply(interaction, getEmbed("🔊 You are not in voice channel !", process.env.RED), false, true);
+    if (!voiceChannel) return embedReply(interaction, USER_NO_IN_CHANNEL, false, true);
     const music = await client.servers.get(voiceChannel.guild.id);
 
     const connection = joinVoiceChannel({
@@ -104,6 +105,4 @@ module.exports.callback = async (client, interaction, options) => {
         })
         .catch(console.error);
     }
-
-    //embedReply(interaction, getEmbed('Song not found ! Sorry ☹ !', process.env.RED), false, true);
 }

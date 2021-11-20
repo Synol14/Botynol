@@ -1,4 +1,5 @@
 const { Client, CommandInteractionOptionResolver, CommandInteraction, Permissions } = require("discord.js");
+const { NO_USER_PERM } = require("../../structures/Embeds");
 const { getBotColor, ephemeralEmbedReply, getEmbed } = require("../../structures/Utils");
 
 module.exports.info = {
@@ -22,9 +23,9 @@ module.exports.callback = async (client, interaction, options) => {
     const keep_only = options.getMentionable('keep_only', false);
 
     /// Check Prohibition
-    if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) return ephemeralEmbedReply(interaction, getEmbed("You don't have permission !", process.env.RED));
+    if (!interaction.member.permissions.has(Permissions.FLAGS.MANAGE_MESSAGES)) return ephemeralEmbedReply(interaction, NO_USER_PERM);
     if (number < 1 || number > 100) return ephemeralEmbedReply(interaction, getEmbed("You must indicate a number from 1 to 10 !", process.env.RED));
-    if (only && keep_only) return ephemeralEmbedReply(interaction, getEmbed("These two parameters is not compatible !", process.env.RED));
+    if (only && keep_only) return ephemeralEmbedReply(interaction, getEmbed("Only and KeepOnly parameters is not compatible !", process.env.RED));
 
     interaction.channel.messages.fetch({ limit: number })
             .then(fetched => {

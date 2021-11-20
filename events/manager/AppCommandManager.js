@@ -1,5 +1,5 @@
 const { Interaction } = require("discord.js");
-const { ephemeralEmbedReply, getEmbed } = require("../../structures/Utils");
+const { getEmbed, embedReply } = require("../../structures/Utils");
 
 module.exports = {
     name: 'interactionCreate',
@@ -21,7 +21,7 @@ module.exports = {
         /// Execute
         let msg = 'SUCCESS'
         if (!command) {
-            await ephemeralEmbedReply(interaction, getEmbed('Command no Done !', process.env.RED));
+            await embedReply(interaction, getEmbed('Command no Done !', process.env.RED), true, true);
             msg = 'FAIL (No Done)';
         }
         else {
@@ -30,7 +30,7 @@ module.exports = {
                 await command.callback(interaction.client, interaction, options);
             } catch (error) {
                 console.error(error);
-                await ephemeralEmbedReply(interaction, getEmbed('Command Error !', process.env.RED));
+                await embedReply(interaction, getEmbed('Command Error !', process.env.RED), true, true);
                 msg = `FAIL ( ${error} )`;
             } finally {
                 /// Log Command

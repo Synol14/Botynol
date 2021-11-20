@@ -11,21 +11,10 @@ module.exports.music = {
         },
         looping: false
     },
+    message: null,
     queue: [],
-    audioPlayer: null
-    /*queue: [],
     backQueue: [],
-    currentVideo: {
-        title: '',
-        url: '',
-        imageUrl: '',
-        commandAuthor: {
-            name: '',
-            avatar: ''
-        },
-        looping: false
-    },
-    message: null*/
+    audioPlayer: null
 }
 
 /**
@@ -50,9 +39,12 @@ module.exports.resetAllMusicObject = async (client) => {
             commandAuthor: {
                 name: '',
                 avatar: ''
-            }
+            },
+            looping: false
         },
+        message: null,
         queue: [],
+        backQueue: [],
         audioPlayer: null
     }));
 }

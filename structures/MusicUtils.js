@@ -15,7 +15,7 @@ module.exports.YOUTUBE_THUMBNAIL = "https://i1.wp.com/www.grapheine.com/wp-conte
  * @param {Boolean} next If is next command
  * @param {Boolean} looping If is lopping command
  */
-module.exports.playVideo = async (interaction, next = false, looping = false) => {
+module.exports.playVideo = async (interaction) => {
     /// Get Guild Object and Voice Connection
     const music = interaction.client.servers.get(interaction.guildId);
     const connection = getVoiceConnection(interaction.guildId)
@@ -33,17 +33,17 @@ module.exports.playVideo = async (interaction, next = false, looping = false) =>
 
     /// Finish Event
     player.once(AudioPlayerStatus.Idle, (oldOne, newOne) => {
-        /// If message exist, delete it
-        if (music.message) this.deleteNowPlayingEmbed(interaction);
+        /// Delete Message Now Playing (if exist)
+        this.deleteNowPlayingEmbed(interaction);
 
-        /*/// Lopping Current Video
+        /// Lopping Current Video
         if (music.currentVideo.looping) {
             this.sendNowPlayigEmbed(interaction);
-            return this.playVideo(interaction, false, true); /// Recursive Function
-        }//*/
+            return this.playVideo(interaction); /// Recursive Function
+        }
 
         /// Add Current Video in backqueue
-        //music.backQueue.unshift(music.currentVideo);
+        music.backQueue.unshift(music.currentVideo);
 
         /// If Queue isn't empty, Start Next Video
         if (music.queue[0]) {
@@ -101,5 +101,5 @@ module.exports.sendQueuedEmbed = async (interaction, result) => {
  */
 module.exports.deleteNowPlayingEmbed = async (interaction) => {
     const music = interaction.client.servers.get(interaction.guildId);
-    if (music.message) music.message.delete();
+    if (music.message && !music.message.deleted) music.message.delete();
 }

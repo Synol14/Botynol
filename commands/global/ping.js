@@ -23,12 +23,15 @@ module.exports.callback = async (client, interaction, options) => {
         .setColor(getBotColor(client, interaction.guildId))
         .setTitle(":ping_pong:  Pong !")
         .setDescription(ownerMsg + `
+
             Message sending - \`${Date.now() - interaction.createdTimestamp} ms\`
             Gateway / Websocket - \`${client.ws.ping} ms\`
+            
             NodeJs Version - \`${process.version}\`
             CPU Usage - \`${Math.round(getCPUUsage())} %\`
             Memory Usage - \`${Math.round( (1 - require('os-utils').freememPercentage()) * 100 )} %\`
             Bot OS - \`${require('os').version()}\`
+
         `);
     interaction.editReply({ embeds: [ embed.toJSON() ], ephemeral: require('./ping').info.ephemeral});
 }
