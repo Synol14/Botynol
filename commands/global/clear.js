@@ -1,5 +1,5 @@
 const { Client, CommandInteractionOptionResolver, CommandInteraction, Permissions } = require("discord.js");
-const { getBotColor, ephemeralEmbedReply, getEmbed } = require("../../Utils");
+const { getBotColor, ephemeralEmbedReply, getEmbed } = require("../../structures/Utils");
 
 module.exports.info = {
     name: 'clear',

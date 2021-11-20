@@ -1,5 +1,5 @@
 const { Interaction } = require("discord.js");
-const { ephemeralEmbedReply, getEmbed } = require("../../Utils");
+const { ephemeralEmbedReply, getEmbed } = require("../../structures/Utils");
 
 module.exports = {
     name: 'interactionCreate',

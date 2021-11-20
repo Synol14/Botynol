@@ -1,7 +1,5 @@
 const { Client, CommandInteractionOptionResolver, MessageEmbed, CommandInteraction } = require("discord.js")
-const os = require('os-utils');
-const { getBotColor } = require("../../Utils");
-require('../../Utils')
+const { getBotColor } = require("../../structures/Utils");
 require('dotenv').config()
 
 module.exports.info = {
@@ -29,7 +27,7 @@ module.exports.callback = async (client, interaction, options) => {
             Gateway / Websocket - \`${client.ws.ping} ms\`
             NodeJs Version - \`${process.version}\`
             CPU Usage - \`${Math.round(getCPUUsage())} %\`
-            Memory Usage - \`${Math.round( (1 - os.freememPercentage()) * 100 )} %\`
+            Memory Usage - \`${Math.round( (1 - require('os-utils').freememPercentage()) * 100 )} %\`
             Bot OS - \`${require('os').version()}\`
         `);
     interaction.editReply({ embeds: [ embed.toJSON() ], ephemeral: require('./ping').info.ephemeral});

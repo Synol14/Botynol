@@ -1,5 +1,6 @@
 const { Client, Intents, Collection } = require('discord.js');
-const { loadCommands, loadEvents } = require('./Utils');
+const { resetAllMusicObject } = require('./structures/Objects');
+const { loadCommands, loadEvents } = require('./structures/Utils');
 require('dotenv').config()
 
 const client = new Client({ 
@@ -23,11 +24,14 @@ client.once('ready', () => {
     })
 
     /// Setup Bot
-    loadCommands(client);
-    loadEvents(client);
+    resetAllMusicObject(client);
+    loadCommands(client, `${__dirname}/commands/`);
+    loadEvents(client, `${__dirname}/events/`);
 
     /// Logging
     console.log(`\n[Info]  Bot Ready ( ${client.user.tag} - ${client.user.id} )\n`);
 });
+
+client.on('error', console.error);
 
 client.login(process.env.TOKEN);

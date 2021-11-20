@@ -74,8 +74,31 @@ module.exports.ephemeralMessageReply = async (interaction, message) => {
  * @param {MessageEmbed} embed Embed to send
  */
  module.exports.ephemeralEmbedReply = async (interaction, embed) => {
-    if (interaction.replied || interaction.deferred) await interaction.editReply({ embeds: [ embed.toJSON() ], ephemeral: true});
-    else await interaction.reply({ embeds: [ embed.toJSON() ], ephemeral: true});
+    this.embedReply(interaction, embed, true);
+}
+
+/**
+ * Reply a Embed to a Interaction
+ * @param {CommandInteraction} interaction Application Command Interaction
+ * @param {MessageEmbed} embed Embed to send
+ */
+ module.exports.embedReply = async (interaction, embed, ephemeral = false, willDelete = false, deleteTime = 10000) => {
+    if (interaction.replied || interaction.deferred) await interaction.editReply({ embeds: [ embed.toJSON() ], ephemeral: interaction.ephemeral})
+        .then(msg => { if (willDelete) setTimeout(() => interaction.deleteReply(), deleteTime) });
+    else await interaction.reply({ embeds: [ embed.toJSON() ], ephemeral: ephemeral})
+        .then(msg => { if (willDelete) setTimeout(() => interaction.deleteReply(), deleteTime) });
+}
+
+/**
+ * Reply a Message to a Interaction
+ * @param {CommandInteraction} interaction Application Command Interaction
+ * @param {MessageEmbed} embed Embed to send
+ */
+ module.exports.messageReply = async (interaction, message, ephemeral = false, willDelete = false, deleteTime = 10000) => {
+    if (interaction.replied || interaction.deferred) await interaction.editReply({ content: message, ephemeral: interaction.ephemeral})
+        .then(msg => { if (willDelete) setTimeout(() => interaction.deleteReply(), deleteTime) });
+    else await interaction.reply({ content: message, ephemeral: ephemeral})
+        .then(msg => { if (willDelete) setTimeout(() => interaction.deleteReply(), deleteTime) });
 }
 
 /**
@@ -95,7 +118,7 @@ module.exports.getBotColor = (client, guildId) => {
  * @param {Client} client Bot Client
  * @param {String} dir Commands Directory
  */
-module.exports.loadCommands = (client, dir = `${__dirname}/commands/`) => {
+module.exports.loadCommands = (client, dir = `../commands/`) => {
     console.log('\n[Info]  Commands Loading ...');
     client.commands.clear();
     client.commandsGroups = [];
@@ -115,7 +138,7 @@ module.exports.loadCommands = (client, dir = `${__dirname}/commands/`) => {
  * @param {Client} client Bot Client
  * @param {String} dir Directory Path
  */
-module.exports.loadEvents = (client, dir = `${__dirname}/events/`) => {
+module.exports.loadEvents = (client, dir = `../events/`) => {
     console.log('\n[Info]  Events Loading ...');
     readdirSync(dir).forEach(dirs => {
         const eventFiles = readdirSync(`${dir}/${dirs}/`).filter(file => file.endsWith('.js'));
