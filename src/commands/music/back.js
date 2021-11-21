@@ -53,6 +53,6 @@ module.exports.callback = async (client, interaction, options) => {
         playVideo(interaction);
     }
 
-    messageReply(interaction, '⏮️ ');
+    messageReply(interaction, '⏮️­');
 
 }

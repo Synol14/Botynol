@@ -53,8 +53,8 @@ module.exports.playVideo = async (interaction) => {
 
         /// Leave Channel and Reset Music Object
         resetMusicObject(interaction.client, interaction.guildId);
-        music.audioPlayer = null;
         setTimeout(() => {
+            music.audioPlayer = null;
             connection.destroy();
             connection.disconnect();
         }, 10000);

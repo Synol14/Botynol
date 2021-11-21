@@ -84,9 +84,9 @@ module.exports.ephemeralMessageReply = async (interaction, message) => {
  */
  module.exports.embedReply = async (interaction, embed, ephemeral = false, willDelete = false, deleteTime = 10000) => {
     if (interaction.replied || interaction.deferred) await interaction.editReply({ embeds: [ embed.toJSON() ], ephemeral: interaction.ephemeral})
-        .then(msg => { if (willDelete) setTimeout(() => interaction.deleteReply(), deleteTime) });
+        .then(msg => { if (willDelete && !interaction.ephemeral) setTimeout(() => interaction.deleteReply(), deleteTime) });
     else await interaction.reply({ embeds: [ embed.toJSON() ], ephemeral: ephemeral})
-        .then(msg => { if (willDelete) setTimeout(() => interaction.deleteReply(), deleteTime) });
+        .then(msg => { if (willDelete && !interaction.ephemeral) setTimeout(() => interaction.deleteReply(), deleteTime) });
 }
 
 /**
@@ -96,9 +96,9 @@ module.exports.ephemeralMessageReply = async (interaction, message) => {
  */
  module.exports.messageReply = async (interaction, message, ephemeral = false, willDelete = false, deleteTime = 10000) => {
     if (interaction.replied || interaction.deferred) await interaction.editReply({ content: message, ephemeral: interaction.ephemeral})
-        .then(msg => { if (willDelete) setTimeout(() => interaction.deleteReply(), deleteTime) });
+        .then(msg => { if (willDelete && !interaction.ephemeral) setTimeout(() => interaction.deleteReply(), deleteTime) });
     else await interaction.reply({ content: message, ephemeral: ephemeral})
-        .then(msg => { if (willDelete) setTimeout(() => interaction.deleteReply(), deleteTime) });
+        .then(msg => { if (willDelete && !interaction.ephemeral) setTimeout(() => interaction.deleteReply(), deleteTime) });
 }
 
 /**
