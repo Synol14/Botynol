@@ -1,12 +1,12 @@
 const { getVoiceConnection } = require("@discordjs/voice");
 const { Client, CommandInteraction, CommandInteractionOptionResolver } = require("discord.js");
-const { USER_NO_IN_CHANNEL, SONG_NO_FOUND } = require("../../structures/Embeds");
-const { deleteNowPlayingEmbed, playVideo, sendNowPlayingEmbed } = require("../../structures/MusicUtils");
+const { SONG_NO_FOUND, NO_QUEUE } = require("../../structures/Embeds");
+const { playVideo, sendNowPlayingEmbed, deleteNowPlayingEmbed } = require("../../structures/MusicUtils");
 const { resetMusicObject } = require("../../structures/Objects");
-const { getEmbed, embedReply, messageReply, getBotColor } = require("../../structures/Utils");
+const { embedReply, messageReply } = require("../../structures/Utils");
 
 module.exports.info = {
-    name: 'next',
+    name: 'back',
     defer: true,
     ephemeral: false
 }
@@ -28,30 +28,31 @@ module.exports.callback = async (client, interaction, options) => {
     if (index > 0) {
         if (music.queue[index]) {
             for (let i = 0; i < index; i++) {
-                music.backQueue.unshift(music.queue[0]);
-                music.queue.shift();
+                music.queue.unshift(music.queue[0]);
+                music.backQueue.shift();
             }
         }else return embedReply(interaction, SONG_NO_FOUND, false, true);
     }
 
     /// Set Up 
     deleteNowPlayingEmbed(interaction);
-    music.backQueue.unshift(music.currentVideo);
+    music.queue.unshift(music.currentVideo);
     const connection = getVoiceConnection(interaction.guildId);
-    
+
     /// If no queue, Exit Voice Channel
-    if (!music.queue[0]) {
+    if (!music.backQueue[0]) {
         resetMusicObject(client, interaction.guildId);
         connection.destroy();
         connection.disconnect();
         return embedReply(interaction, NO_QUEUE(client, interaction.guildId), false, true);
     } else {
         if (interaction.member.voice.joinable) connection.rejoin();
-        music.currentVideo = music.queue[0];
-        music.queue.shift(); 
+        music.currentVideo = music.backQueue[0];
+        music.backQueue.shift(); 
         sendNowPlayingEmbed(interaction);
         playVideo(interaction);
     }
 
-    messageReply(interaction, '⏭️ ');
+    messageReply(interaction, '⏮️ ');
+
 }

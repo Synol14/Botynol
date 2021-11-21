@@ -27,8 +27,6 @@ module.exports.playVideo = async (interaction) => {
     player.play(resource);
     connection.subscribe(player);
 
-    //if (next) music.queue.shift();              // Set Queue or 
-    //else if (!looping) music.backQueue.shift(); //     Backqueue
     music.audioPlayer = player;
 
     /// Finish Event
