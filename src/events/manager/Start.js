@@ -1,4 +1,5 @@
 const { Client } = require("discord.js");
+const { Logger } = require("../../structures/Logger");
 const { resetAllMusicObject } = require("../../structures/Objects");
 
 module.exports = {
@@ -13,6 +14,7 @@ module.exports = {
         resetAllMusicObject(client);
 
         /// Logging
-        console.log(`\n[Info]  Bot Ready ( ${client.user.tag} - ${client.user.id} )\n`);
+        Logger.blankLine();
+        Logger.info(`Bot Ready ( ${client.user.tag} - ${client.user.id} )\n\n`);
     }
 }

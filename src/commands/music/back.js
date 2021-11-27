@@ -42,8 +42,10 @@ module.exports.callback = async (client, interaction, options) => {
     /// If no queue, Exit Voice Channel
     if (!music.backQueue[0]) {
         resetMusicObject(client, interaction.guildId);
-        connection.destroy();
-        connection.disconnect();
+        if (connection) {
+            connection.destroy();
+            connection.disconnect();
+        }
         return embedReply(interaction, NO_QUEUE(client, interaction.guildId), false, true);
     } else {
         if (interaction.member.voice.joinable) connection.rejoin();

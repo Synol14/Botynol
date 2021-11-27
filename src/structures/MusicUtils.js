@@ -5,6 +5,7 @@ const { embedReply, getBotColor } = require("./Utils");
 const ytdl = require('ytdl-core-discord');
 const ytsr = require('youtube-search');
 const ytpl = require('ytpl');
+const { Logger } = require("./Logger");
 
 module.exports.YOUTUBE_THUMBNAIL = "https://i1.wp.com/www.grapheine.com/wp-content/uploads/2017/08/youtube-logo.gif?quality=90&strip=all&ssl=1";
 
@@ -54,11 +55,22 @@ module.exports.playVideo = async (interaction) => {
         /// Leave Channel and Reset Music Object
         resetMusicObject(interaction.client, interaction.guildId);
         setTimeout(() => {
-            music.audioPlayer = null;
-            connection.destroy();
-            connection.disconnect();
-        }, 10000);
+            if (music.audioPlayer === player || music.audioPlayer === null) {
+                player.stop();
+                music.audioPlayer = null;
+                connection.destroy();
+                connection.disconnect();
+            }
+        }, 30000);
     });
+
+    /// Error Event
+    player.once('error', (error) => {
+        Logger.errorInteraction(interaction, `An error has occuring during video playing ( ${error} )`);
+        player.removeAllListeners();
+        player.stop(true);
+        this.playVideo(interaction);
+    })
 }
 
 /**
@@ -67,15 +79,18 @@ module.exports.playVideo = async (interaction) => {
  */
 module.exports.sendNowPlayingEmbed = async (interaction) => {
     const music = interaction.client.servers.get(interaction.guildId);
-    interaction.channel.send({ embeds: [ new MessageEmbed()
-            .setColor(getBotColor(interaction.client))
-            .setTitle('🎵 Now Playing :')
-            .setDescription(`[${music.currentVideo.title}](${music.currentVideo.url})`)
-            .setAuthor(music.currentVideo.commandAuthor.name, music.currentVideo.commandAuthor.avatar, music.currentVideo.commandAuthor.avatar)
-            .setImage(music.currentVideo.imageUrl)
-            .setThumbnail(this.YOUTUBE_THUMBNAIL)
-            .toJSON() 
-        ] })
+    interaction.channel.send({
+        embeds: [
+            new MessageEmbed()
+                .setColor(getBotColor(interaction.client))
+                .setTitle('🎵 Now Playing :')
+                .setDescription(`[${music.currentVideo.title}](${music.currentVideo.url})`)
+                .setAuthor(music.currentVideo.commandAuthor.name, music.currentVideo.commandAuthor.avatar, music.currentVideo.commandAuthor.avatar)
+                .setImage(music.currentVideo.imageUrl)
+                .setThumbnail(this.YOUTUBE_THUMBNAIL)
+                .toJSON()
+        ]
+    })
         .then(msg => music.message = msg);
 }
 
@@ -86,7 +101,7 @@ module.exports.sendNowPlayingEmbed = async (interaction) => {
  */
 module.exports.sendQueuedEmbed = async (interaction, result) => {
     const music = interaction.client.servers.get(interaction.guildId);
-    embedReply(interaction, 
+    embedReply(interaction,
         new MessageEmbed()
             .setColor(getBotColor(interaction.client))
             .setDescription(`🎵 Queued [${result.title}](${result.url})`)

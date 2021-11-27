@@ -1,4 +1,5 @@
 const { Interaction } = require("discord.js");
+const { Logger } = require("../../structures/Logger");
 const { getEmbed, embedReply } = require("../../structures/Utils");
 
 module.exports = {
@@ -19,10 +20,10 @@ module.exports = {
         const command = interaction.client.commands.get(commandName);
         
         /// Execute
-        let msg = 'SUCCESS'
+        let state = 'SUCCESS'
         if (!command) {
             await embedReply(interaction, getEmbed('Command no Done !', process.env.RED), true, true);
-            msg = 'FAIL (No Done)';
+            state = 'FAIL (No Done)';
         }
         else {
             try {
@@ -31,10 +32,10 @@ module.exports = {
             } catch (error) {
                 console.error(error);
                 await embedReply(interaction, getEmbed('Command Error !', process.env.RED), true, true);
-                msg = `FAIL ( ${error} )`;
+                state = `FAIL ( ${error} )`;
             } finally {
                 /// Log Command
-                console.log(`[Info]  [App_Cmd - ${id}]  The \'${commandName}\' command has been use with  ${msg}`);
+                Logger.logAppCmd(interaction, state);
             }
         }
     }

@@ -1,5 +1,6 @@
 const { Client, MessageEmbed, User, Channel, Interaction, CommandInteraction } = require("discord.js");
 const { readdirSync } = require("fs");
+const { Logger } = require("./Logger");
 
 /**
  * Get an Embed with a Title and the Default Color
@@ -119,7 +120,8 @@ module.exports.getBotColor = (client, guildId) => {
  * @param {String} dir Commands Directory
  */
 module.exports.loadCommands = (client, dir = `../commands/`) => {
-    console.log('\n[Info]  Commands Loading ...');
+    Logger.blankLine();
+    Logger.info('   << Commands Loading ... >>');
     client.commands.clear();
     client.commandsGroups = [];
     readdirSync(dir).forEach(dirs => {
@@ -128,7 +130,7 @@ module.exports.loadCommands = (client, dir = `../commands/`) => {
         for (const file of commands) {
             const getFile = require(`${dir}/${dirs}/${file}`);
             client.commands.set(getFile.info.name.toLowerCase(), getFile)
-            console.log(`-> Command loaded: ${getFile.info.name}`);
+            Logger.info(`-> Command loaded: ${getFile.info.name}`);
         }
     });
 }
@@ -139,7 +141,8 @@ module.exports.loadCommands = (client, dir = `../commands/`) => {
  * @param {String} dir Directory Path
  */
 module.exports.loadEvents = (client, dir = `../events/`) => {
-    console.log('\n[Info]  Events Loading ...');
+    Logger.blankLine();
+    Logger.info('   << Events Loading ... >>');
     readdirSync(dir).forEach(dirs => {
         const eventFiles = readdirSync(`${dir}/${dirs}/`).filter(file => file.endsWith('.js'));
         for (const file of eventFiles) {
@@ -149,7 +152,7 @@ module.exports.loadEvents = (client, dir = `../events/`) => {
             } else {
                 client.on(event.name, (...args) => event.execute(...args));
             }
-            console.log(`-> Event loaded: ${event.name} - ${file}`);
+            Logger.info(`-> Event loaded: ${event.name} - ${file}`);
         }
     });
 }

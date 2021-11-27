@@ -1,6 +1,6 @@
 const { getVoiceConnection } = require("@discordjs/voice");
 const { Client, CommandInteraction, CommandInteractionOptionResolver } = require("discord.js");
-const { USER_NO_IN_CHANNEL, SONG_NO_FOUND } = require("../../structures/Embeds");
+const { USER_NO_IN_CHANNEL, SONG_NO_FOUND, NO_QUEUE } = require("../../structures/Embeds");
 const { deleteNowPlayingEmbed, playVideo, sendNowPlayingEmbed } = require("../../structures/MusicUtils");
 const { resetMusicObject } = require("../../structures/Objects");
 const { getEmbed, embedReply, messageReply, getBotColor } = require("../../structures/Utils");

@@ -30,7 +30,7 @@ module.exports.callback = async (client, interaction, options) => {
         adapterCreator: interaction.guild.voiceAdapterCreator,
     });
 
-    /// Get Url and Platform
+    /// Get Url and Platform Option
     const query = options.getString('query');
     const platform = options.getString('platform');
 
