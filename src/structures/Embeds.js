@@ -1,4 +1,4 @@
-const { getEmbed } = require("./Utils");
+const { getEmbed, getBotColor } = require("./Utils");
 
 module.exports = {
     NO_USER_PERM: getEmbed("🛑 You don't have permission !", process.env.RED),

@@ -49,7 +49,7 @@ module.exports.callback = async (client, interaction, options) => {
                     url: video.shortUrl,
                     imageUrl: video.bestThumbnail.url,
                     commandAuthor: {
-                        name: interaction.member.displayName(),
+                        name: interaction.member.displayName,
                         avatar: interaction.member.displayAvatarURL()
                     },
                     looping: false

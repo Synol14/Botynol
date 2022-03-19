@@ -1,4 +1,4 @@
-const { VoiceConnection, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus } = require("@discordjs/voice");
+const { VoiceConnection, createAudioPlayer, createAudioResource, getVoiceConnection, AudioPlayerStatus, demuxProbe } = require("@discordjs/voice");
 const { CommandInteraction, MessageEmbed } = require("discord.js");
 const { resetMusicObject } = require("./Objects");
 const { embedReply, getBotColor } = require("./Utils");
@@ -33,7 +33,7 @@ module.exports.playVideo = async (interaction) => {
     /// Finish Event
     player.once(AudioPlayerStatus.Idle, (oldOne, newOne) => {
         /// Delete Message Now Playing (if exist)
-        this.deleteNowPlayingEmbed(interaction);
+        //this.deleteNowPlayingEmbed(interaction);
 
         /// Lopping Current Video
         if (music.currentVideo.looping) {
@@ -64,9 +64,12 @@ module.exports.playVideo = async (interaction) => {
         }, 30000);
     });
 
+    
+
     /// Error Event
     player.once('error', (error) => {
-        Logger.errorInteraction(interaction, `An error has occuring during video playing ( ${error} )`);
+        console.error(error);
+        Logger.errorInteraction(interaction, `An error has occured during video playing ( ${error} )`);
         player.removeAllListeners();
         player.stop(true);
         this.playVideo(interaction);
@@ -79,19 +82,15 @@ module.exports.playVideo = async (interaction) => {
  */
 module.exports.sendNowPlayingEmbed = async (interaction) => {
     const music = interaction.client.servers.get(interaction.guildId);
-    interaction.channel.send({
-        embeds: [
-            new MessageEmbed()
-                .setColor(getBotColor(interaction.client))
-                .setTitle('🎵 Now Playing :')
-                .setDescription(`[${music.currentVideo.title}](${music.currentVideo.url})`)
-                .setAuthor(music.currentVideo.commandAuthor.name, music.currentVideo.commandAuthor.avatar, music.currentVideo.commandAuthor.avatar)
-                .setImage(music.currentVideo.imageUrl)
-                .setThumbnail(this.YOUTUBE_THUMBNAIL)
-                .toJSON()
-        ]
-    })
-        .then(msg => music.message = msg);
+    const embed = new MessageEmbed()
+        .setColor(getBotColor(interaction.client))
+        .setTitle('🎵 Now Playing :')
+        .setDescription(`[${music.currentVideo.title}](${music.currentVideo.url})`)
+        .setAuthor(music.currentVideo.commandAuthor.name, music.currentVideo.commandAuthor.avatar, music.currentVideo.commandAuthor.avatar)
+        .setImage(music.currentVideo.imageUrl)
+        .setThumbnail(this.YOUTUBE_THUMBNAIL);
+    if (music.message) music.message.edit({ embeds: [ embed.toJSON() ] });
+    else interaction.channel.send({ embeds: [ embed.toJSON() ] }).then(msg => music.message = msg);
 }
 
 /**
@@ -114,5 +113,5 @@ module.exports.sendQueuedEmbed = async (interaction, result) => {
  */
 module.exports.deleteNowPlayingEmbed = async (interaction) => {
     const music = interaction.client.servers.get(interaction.guildId);
-    if (music.message && !music.message.deleted) music.message.delete();
+    if (music.message && !music.message.deleted) music.message.delete().then(music.message = null);
 }

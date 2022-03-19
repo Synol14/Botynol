@@ -1,3 +1,5 @@
+const { Logger } = require("../../structures/Logger")
+
 module.exports = {
     name: 'error',
     once: false,
@@ -6,6 +8,6 @@ module.exports = {
      * @param {Error} err Error Found
      */
     async execute(err) {
-        console.error(err);
+        Logger.error(err);
     }
 }

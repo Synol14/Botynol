@@ -3,10 +3,10 @@ const { CommandInteraction, Interaction } = require("discord.js");
 module.exports.Logger = {
 
     info(message) {
-        console.log(`[Info]  ${message}`);
+        console.log(`[Info] ${message}`);
     },
     error(message) {
-        console.error(`[Error]  ${message}`);
+        console.error(`[Error] ${message}`);
     },
     blankLine() {
         console.log(' ');
@@ -37,5 +37,5 @@ module.exports.Logger = {
         if (state.startsWith('SUCCES')) this.infoInteraction(interaction, msg);
         else this.error(msg);
     }
-
+    
 }
